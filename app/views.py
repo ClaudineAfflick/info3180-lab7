@@ -30,24 +30,19 @@ def index(path):
     return render_template('index.html')
     
     
-    
 @app.route('/photo-upload', methods=['GET', 'POST'])
 def photo_upload():
-    uploadform = UploadForm()
-    if request.method == 'POST' and uploadform.validate_on_submit():
+    {
+        "message": "File Upload Successful",
+        "filename": "you-uploaded-file.jpg",
+        "description": "Some description for your image"
+    }
 
-        photo = uploadform.photo.data # we could also use request.files['photo']
-        description = uploadform.description.data
-
-        filename = secure_filename(photo.filename)
-        photo.save(os.path.join(
-            app.config['UPLOAD_FOLDER'], filename
-        ))
-
-        return render_template('display_photo.html', filename=filename, description=description)
-
-    # flash_errors(uploadform)
-    return render_template('photo_upload.html', form=uploadform)
+    {
+        "errors":[
+            {"errors":"form_errors"}
+            ]
+    }
 
 
 
