@@ -6,9 +6,10 @@ This file creates your application.
 """
 import os
 from app import app
-from flask import render_template, request
+from flask import render_template, request, redirect, url_for, flash, session
 from werkzeug.utils import secure_filename
 from .forms import UploadForm
+from flask import jsonify
 ###
 # Routing for your application.
 ###
@@ -30,20 +31,33 @@ def index(path):
     return render_template('index.html')
     
     
-@app.route('/photo-upload', methods=['GET', 'POST'])
-def photo_upload():
-    {
-        "message": "File Upload Successful",
-        "filename": "you-uploaded-file.jpg",
-        "description": "Some description for your image"
-    }
-
-    {
+@app.route('/api/upload', methods=['GET','POST'])
+def upload():
+    upload=UploadForm()
+    if request.method == 'POST':
+        if upload.validate_on_submit():
+            photo = upload.photo.data
+            description=upload.description.data
+            filename = secure_filename(photo.filename)
+            photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    
+            flash('File Saved', 'success')
+            hello= {
+                "message": "File Upload Successful",
+                "filename": "you-uploaded-file.jpg",
+                "description": "Some description for your image"
+                
+            }
+            return jsonify(hello=hello)
+    error={
         "errors":[
-            {"errors":"form_errors"}
-            ]
-    }
-
+            {"error400":"Bad Request"},
+            {"error404":"Not Found"},
+            {"error403":"Forbidden"}
+            ] }
+    return jsonify(error=error)
+           
+    
 
 
 # Here we define a function to collect form errors from Flask-WTF

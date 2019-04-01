@@ -18,6 +18,48 @@ Vue.component('app-header', {
     `
 });
 
+Vue.component('upload-form',{
+    template:
+    `<div>
+        <form @submit.prevent="uploadPhoto" >
+            
+            <div class="form-group">
+               <input type="file" name="fileToUpload" id="fileToUpload">
+            </div>
+            <div class="form-group">
+               <input type="text" value="Description" name="describe">
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>`
+    ,
+    data: function() {
+       return {}
+    }
+    ,
+    methods:{
+        upload:function(){
+            fetch('/api/upload', {
+                method: 'POST'
+                
+            })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (jsonResponse) {
+                // display a success message
+                console.log(jsonResponse);
+                
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        }
+        
+    }
+});
+
 Vue.component('app-footer', {
     template: `
     <footer>
